@@ -1,0 +1,12 @@
+@mixin dft(){
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+@mixin dfcol(){
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}

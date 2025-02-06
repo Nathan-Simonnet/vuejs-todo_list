@@ -1,0 +1,69 @@
+// :root {
+//     --mainBackgroundColor: #F7F9FB;
+//     --primaryColor: #007ACC ;
+//     --accentColor: #00B5D9 ;
+//     --textColor: #333333 ;
+//     --completedTasktColor: #6DBF54;
+// }
+
+@use '../utils/variables' as vars;
+
+*,
+::after,
+::before {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    border: 1px solid red; 
+    color: vars.$textColor;
+}
+span{
+     border: none;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    padding: 24px;
+    background: vars.$mainBackgroundColor;
+}
+
+a {
+    color: black;
+    text-decoration: none;
+}
+
+a:visited {
+    color: black;
+    text-decoration: none;
+}
+
+li {
+    list-style-type: none;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+*,::after,::before{
+padding:0;
+margin:0;
+box-sizing: border-box;
+border: 1px solid red;
+}
+
+//
+
+
