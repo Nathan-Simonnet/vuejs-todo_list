@@ -1,3 +1,20 @@
-main{
-   border: 2px solid purple;
+@use '../utils/variables' as vars;
+
+#app{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+
+  width: 100%;
+  
+  main{
+    width: 90%;
+    min-width: 280px;
+    max-width: 400px;
+    background-color: vars.$containerColor;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 5px rgba(0,0,0,0.3);
+  }
 }

@@ -1,0 +1,31 @@
+@use '../utils/variables' as vars;
+
+.task-input-container {
+    position:relative;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    gap: 12px;
+
+    input[type='text'] {
+        padding: 6px;
+        border-radius: 4px;
+        box-shadow: 0 4px 5px rgba(0, 0, 0, 0.3);
+        background: vars.$containerColor;
+        border: vars.$bordersColor;
+        border: 2px solid #ced4da;
+        border-radius: 6px;
+        outline: none;
+        transition: border-color 0.3s ease, width 0.1s ease-out;
+
+        min-width: 24ch; /* Start with enough space for 24 characters */
+        max-width: 100%; 
+    }
+
+    input[type="text"]:focus {
+        border-color: vars.$bordersColor;
+    }
+}

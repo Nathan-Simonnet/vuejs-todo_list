@@ -4,5 +4,7 @@
 @use 'layout/footer';
 @use 'layout/header';
 @use 'pages/homepage';
+@use 'pages/input-task';
+@use 'pages/task-list-container';
 @use 'theme/dark-mode.scss';
 @use 'utils/mixins';

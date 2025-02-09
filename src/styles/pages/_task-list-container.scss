@@ -1,0 +1,83 @@
+@use '../utils/variables' as vars;
+
+.task-list-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    ul {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: start;
+
+        gap: 12px;
+        padding: 12px;
+        width: 100%;
+
+        li {
+            // font-size: 0.8rem;
+            position: relative;
+            width: calc(100% - 24px);
+            margin-left: 24px;
+            cursor: pointer;
+
+            word-wrap: break-word; /* Deprecated, but still works */
+            overflow-wrap: break-word; /* Modern alternative */
+
+            border-bottom: 2px solid #6c35de;
+        }
+
+        li.placeholder {
+            pointer-events: none;
+        }
+
+        li:hover {
+            list-style-image: url("/src/assets/check-mark-white.svg");
+        }
+
+        li:focus-visible {
+            list-style-image: url("/src/assets/check-mark-white.svg");
+            border-radius: 2px;
+            outline: 2px solid vars.$bordersColor; 
+            border-bottom: 2px solid transparent;   
+        }
+
+        li.completed {
+            list-style-image: url("/src/assets/check-mark-white.svg");
+            text-decoration: line-through;
+            text-decoration-color: vars.$mainBackgroundColor;
+            text-decoration-thickness: 4px; /* Make the line bolder */
+
+            // &::after {
+            //     position: absolute;
+            //     top: 50%;
+            //     left: 0;
+
+            //     transform: translateY(-50%);
+            //     content: '';
+            //     width: 100%;
+            //     height: 2px;
+            //     background: vars.$mainBackgroundColor;
+            // }
+        }
+
+        li.completed:hover {
+            list-style-image: url("/src/assets/cross-mark-white.svg");
+        }
+
+        li.placeholder{
+            font-size: 0.8rem;
+            border-bottom: 2px solid transparent;   
+            text-align:center;
+            padding:0;
+            margin:0;
+        }
+    }
+
+    button.hidden{
+        display: none;
+    }
+}
