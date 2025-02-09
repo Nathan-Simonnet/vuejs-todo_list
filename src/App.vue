@@ -18,7 +18,7 @@
             <ul>
                 <!-- For every element in taskList, create a li -->
                 <li v-for="(task, index) in taskList" :key="task.id" :class="task.state"
-                    @click="taskHandler(task)" @keyup.enter="taskHandler(task)" tabindex="0">{{ task.taskName }}</li>
+                    @click="taskHandler(task)" @keyup.enter="taskHandler(task)" tabindex="0" :id="task+'-'+index">{{ task.taskName }}</li>
             </ul>
             <button :class="{ 'hidden': taskPlaceholder }" @click="clearAllTasks" @keyup.enter="clearAllTasks">Clear all
                 tasks</button>
@@ -96,7 +96,7 @@ const taskHandler = (task: Task) => {
 
     if (taskList.value.length === 0) {
         taskList.value.push({
-            taskName: "Nothing for now, good job !!",
+            taskName: "Nothing for now!",
             state: "placeholder",
             id: crypto.randomUUID(),
         });
@@ -110,7 +110,7 @@ const clearAllTasks = () => {
     console.log(taskList.value)
 
     taskList.value.push({
-        taskName: "Nothing for now, good job !!",
+        taskName: "Nothing for now !",
         state: "placeholder",
         id: crypto.randomUUID(),
     });
