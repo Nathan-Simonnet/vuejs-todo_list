@@ -1,107 +1,133 @@
+<!-- IDEAS
+    click droit pour annuler l'action de checkmarkage
+    -->
+
 <template>
-    <h1>To-Do List</h1>
     <main>
         <div class="task-input-container">
-            <label for="inputText" class="sr-only">Enter a new task</label>
-            <!-- Style: Better idea, use a textarea (for Germans lol), but interesting training
-                    Still, it track the value.lenght of the input.value, and icrease it if > 24chaactère (and stop at 52, because....)
-
-                    v-model: No more addEventListener -> e.target.value... Track store the value using ref() 
-
-                    keyup/click: to trigger the functionaddNewTask
-            -->
-            <input :style="{ 'min-width': adjustMinWidth + 'ch' }" type="text" id="inputText" v-model="newTask"
-                @keyup.enter="addNewTask" placeholder="Enter a new task">
-            <button @click="addNewTask" @keyup.enter="addNewTask">Add Task</button>
+            <label for="inputText">Enter a new task</label>
+            <input type="text" id="inputText" v-model="newTask" @keyup.enter="addNewTask" placeholder="Walk the dog">
+            <button @click="addNewTask">Add Task</button>
         </div>
         <div class="task-list-container">
             <ul>
-                <!-- For every element in taskList, create a li -->
-                <li v-for="(task, index) in taskList" :key="task.id" :class="task.state"
-                    @click="taskHandler(task)" @keyup.enter="taskHandler(task)" tabindex="0" :id="task+'-'+index">{{ task.taskName }}</li>
+                <li v-for="task in taskList" :key="task.id" :id="task.id" :class="task.state"
+                    @click="taskHandler(task)">
+                    {{ task.taskName }}</li>
             </ul>
-            <button :class="{ 'hidden': taskPlaceholder }" @click="clearAllTasks" @keyup.enter="clearAllTasks">Clear all
+            <button :class="{ 'hidden': taskPlaceholder }" @click="showTaskModal" @keyup.enter="clearAllTasks">Clear all
                 tasks</button>
+        </div>
+
+        <div id="task-modal" :class="{'hidden': !taskModalIsVisible}">
+            <h3>Are you sure you want to delete all task?</h3>
+            <div>
+                <button  @click="() => { hideTaskModal(); clearAllTasks(); }" >YES</button>
+                <button @click="hideTaskModal" >NO!</button>
+            </div>
         </div>
     </main>
 </template>
-
+<!-- ---------------------------- -->
 <script setup lang='ts'>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 
-// Define the Task interface
 interface Task {
     taskName: string;
     state: string;
     id: string;
 }
 
-const newTask = ref("");
-const taskPlaceholder = ref(false);
-const taskList = ref<Task[]>([]);
-
-const LOCAL_STORAGE_KEY = "todoList";
-const TASK_PLACEHOLDER_KEY = "taskPlaceholder";
-
-// Function to save tasks to local storage
-const saveTasks = () => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(taskList.value));
-    localStorage.setItem(TASK_PLACEHOLDER_KEY, JSON.stringify(taskPlaceholder.value));
-};
-
-// Load tasks from local storage ON MOUNT
-onMounted(() => {
-    const savedTasks = localStorage.getItem(LOCAL_STORAGE_KEY);
-    taskPlaceholder.value = (localStorage.getItem(TASK_PLACEHOLDER_KEY) === "true" ? true : false);
-
-    if (savedTasks) {
-        taskList.value = JSON.parse(savedTasks);
-    } else {
-        // Default tasks if no saved tasks
-        taskList.value = [
-            { taskName: "Groceries", state: "incompleted", id: crypto.randomUUID() },
-            { taskName: "Dentist", state: "incompleted", id: crypto.randomUUID() + 1 },
-            { taskName: "Read", state: "completed", id: crypto.randomUUID() + 2 }
-        ];
+const taskList = ref<Task[]>([
+    {
+        taskName: "Groceries",
+        state: "incompleted",
+        id: crypto.randomUUID()
+    },
+    {
+        taskName: "Dentist",
+        state: "incompleted",
+        id: crypto.randomUUID()
+    }, {
+        taskName: "Read",
+        state: "completed",
+        id: crypto.randomUUID()
     }
-});
+]);
 
-// Watch for changes and save tasks automatically
-watch(taskList, saveTasks, { deep: true });
+const newTask = ref("");
+// Do we have to add a placholder or not?
+const taskPlaceholder = ref(false);
 
 const addNewTask = () => {
-    if (newTask.value.trim() === "") return;
+    if (newTask.value.trim() === "") { return };
 
+    // If placeholder, nothing else is in the array, so we delete the first (and only) element placeholder before adding the new task
     if (taskPlaceholder.value) {
-        taskList.value.pop();
         taskPlaceholder.value = false;
+        taskList.value.pop();
     };
 
     taskList.value.push({
-        taskName: newTask.value,
+        taskName: newTask.value.trim(),
         state: "incompleted",
         id: crypto.randomUUID(),
     });
-
+    localStoring();
     newTask.value = "";
 };
 
-// Function to toggle task state or delete completed tasks
-const taskHandler = (task: Task) => {
+function taskHandler(task: Task) {
     if (task.state === "incompleted") {
         task.state = "completed";
     } else if (task.state === "completed") {
-        taskList.value = taskList.value.filter(t => t.id !== task.id);
-    }
-
+        taskList.value = taskList.value.filter((taskToKeep) => taskToKeep.id !== task.id)
+    };
+    // Add placeholder if empty
     if (taskList.value.length === 0) {
         taskList.value.push({
-            taskName: "Nothing for now!",
+            taskName: "Nothing for now !",
             state: "placeholder",
             id: crypto.randomUUID(),
         });
         taskPlaceholder.value = true;
+    };
+    localStoring();
+};
+
+//store taskList.value from local storage 
+//store placeholder state from local storage 
+const localStoring = () => {
+    localStorage.setItem('TASK_LIST_KEY', JSON.stringify(taskList.value));
+    localStorage.setItem('PLACEHOLDER_STATE_KEY', taskPlaceholder.value.toString());
+};
+
+//Restore taskList.value from local storage 
+//Restore placeholder state from local storage 
+const restoreLocalStorage = () => {
+    try {
+        const storedTaskList = localStorage.getItem('TASK_LIST_KEY');
+        const storedPlaceholderState = localStorage.getItem('PLACEHOLDER_STATE_KEY');
+
+        if (storedTaskList) {
+            taskList.value = JSON.parse(storedTaskList);
+        }
+        if (storedPlaceholderState) {
+            taskPlaceholder.value = storedPlaceholderState === 'true';
+        }
+    } catch (error) {
+        console.error('Error restoring localStorage:', error);
     }
+};
+
+const taskModalIsVisible= ref(false)
+
+const showTaskModal = () => {
+    taskModalIsVisible.value = true;
+};
+
+const hideTaskModal = () => {
+    taskModalIsVisible.value = false;
 };
 
 const clearAllTasks = () => {
@@ -115,31 +141,12 @@ const clearAllTasks = () => {
         id: crypto.randomUUID(),
     });
     taskPlaceholder.value = true;
+    localStoring();
 };
 
-// Input With
-// ===========================
-
-// COMPUTED: here it is...
-// computed properties are used to derive and return values based on reactive data (in an efficient way).
-// const firstName = ref("John");
-// const lastName = ref("Doe");
-
-// const fullName = computed(() => {
-//   return `${firstName.value} ${lastName.value}`;
-// });
-
-const adjustMinWidth = computed(() => {
-    if (newTask.value.length > 24 && newTask.value.length < 32) {
-        return newTask.value.length
-    } else if (newTask.value.length >= 32) {
-        return 32
-    } else {
-        return 24
-    }
+// Every refresh it trigger the restoration... Can be improve but for now it work
+onMounted(() => {
+    restoreLocalStorage();
 });
 
 </script>
-
-
-<style></style>
